@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Qimin Liu" />
+
+<meta name="date" content="2018-01-31" />
+
+<title>Data Analyses with Ceiling/Floor data</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Data Analyses with Ceiling/Floor data</h1>
+<h4 class="author"><em>Qimin Liu</em></h4>
+<h4 class="date"><em>2018-01-31</em></h4>
+
+
+
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>Ceiling and floor effects are common in data. Ceiling or floor effects occur when the tests or scales are relatively easy or difficult such that substantial proportions of individuals obtain either maximum or minimum scores and that the true extent of their abilities cannot be determined.</p>
+<p>Ceiling and floor effects, subsequently, causes problems in data analysis. For example, ceiling or floor effects alone would induce, respectively, attenuation or inflation in mean estimates. And both ceiling and floor effects would result in attenuation in variance estimates. This imposes challenges in mean and variance based data analytic methods.</p>
+<p>This package implements methods to deal with challenges associated with ceiling/floor effects in the data using paramtric methods that assume normality for the true scores. The current version is capable of mean and variance recovery given data with ceiling/floor effects and of mean comparison tests such as t-test and ANOVA for data with ceiling/floor effects.</p>
+</div>
+<div id="helper-functions" class="section level1">
+<h1>Helper functions</h1>
+<p>The package contains a helper function <code>threeganova.sim</code> that would generate a three-group anova data with a standard normal control group and positive/negative treatment groups of effect with same magnitudes. In addition, one can specify the standard deviation in positive treatment group. To see the specifics of the function, user can enter <code>?threeganova.sim</code> in the R console.</p>
+<p>Another helper function included in the package is <code>induce.cfe</code> where the user can manually induce ceiling and floor effects to healthy data. To see the specifics of the function, user can enter <code>?induce.cfe</code> in the R console.</p>
+<p>Moreover, the function <code>F.star.test</code> allows user to conduct a Brown-Forsythe F star test. This is a variant of the commonly used F test. F star test is robust against violations of homogeneity of variance (HOV) assumption for the F test.</p>
+</div>
+<div id="functions-for-data-analyses" class="section level1">
+<h1>Functions for data analyses</h1>
+<p>The current version of the package includes three functions that can facilitate the user to conduct data analyses for data with ceiling/floor effects.<code>rec.mean.var</code> estimates the true mean and variance of the data with ceiling/floor effects. That is, as mentioned in the summary, the observed mean and variance of data with ceiling/floor effects are often biased. Thus, <code>rec.mean.var</code> aims to help the user to recover the mean and variance of the data were ceiling/floor effects absent. <code>lw.t.test</code> conducts a t test that adjusts for ceiling/floor effects in the data. As <code>lw.t.test</code> also uses Welch’s t test, the adjusted t test is robust against HOV violation. <code>lw.f.star</code> conducts a F star test for one-way ANOVA that adjusts for ceiling/floor effects in the data. <code>lw.f.star</code> is also robust against HOV violation. For both <code>lw.f.star</code> and <code>lw.t.test</code>: method <code>a</code> is a liberal appraoch that yields accurate effect size estimates but has mildly inflated type I error rates, <code>b</code> is a conservative approach with well-controlled type I error rates that have good, but less accurate than <code>a</code>, effect estimates.</p>
+</div>
+<div id="example-1-an-aging-example" class="section level1">
+<h1>Example 1: an Aging Example</h1>
+<p>Imagine a scenario where we wish to test the difference in cognitive ability for people of different age groups. In this toy example, we have 1000 participants for three age groups, the younger-aged group has true mean and variance of respectively 30 and 25, the middle-aged group 20 and 25 and the older-aged group 10 and 100. The higher the score, the higher the cognitive ability. We can check the mean and variance of the true mean and variance on the data composed of true scores, <code>ca.true</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># group sample mean</span>
+<span class="kw">aggregate</span>(ca.true[,<span class="dv">1</span>],mean,<span class="dt">by=</span><span class="kw">list</span>(ca.true[,<span class="dv">2</span>]))</code></pre></div>
+<pre><code>##   Group.1        x
+## 1       1 29.86404
+## 2       2 20.13646
+## 3       3 10.40217</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># group sample variance</span>
+<span class="kw">aggregate</span>(ca.true[,<span class="dv">1</span>],var,<span class="dt">by=</span><span class="kw">list</span>(ca.true[,<span class="dv">2</span>]))</code></pre></div>
+<pre><code>##   Group.1         x
+## 1       1  23.98873
+## 2       2  25.69791
+## 3       3 102.23938</code></pre>
+<p>Now consider the fact that a substantial proportion of the younger-aged group may score maximum at the cognitive ability test and a substantial proportion of the older-aged group may score minimum. Let both the ceiling and the floor proportions be 15%, we have the dataset <code>ca.cf</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># group sample mean</span>
+<span class="kw">aggregate</span>(ca.cf[,<span class="dv">1</span>],mean,<span class="dt">by=</span><span class="kw">list</span>(ca.cf[,<span class="dv">2</span>]))</code></pre></div>
+<pre><code>##   Group.1        x
+## 1       1 28.91833
+## 2       2 20.13646
+## 3       3 12.36256</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># grouple sample variance</span>
+<span class="kw">aggregate</span>(ca.cf[,<span class="dv">1</span>],var,<span class="dt">by=</span><span class="kw">list</span>(ca.cf[,<span class="dv">2</span>]))</code></pre></div>
+<pre><code>##   Group.1        x
+## 1       1 13.53518
+## 2       2 25.69791
+## 3       3 57.82140</code></pre>
+<p>We can see that both the mean and the variance estimates from the younger-aged and the older-aged groups are biased. The function <code>rec.mean.var</code> can help recover the mean and variance. In the example of the younger-aged group, we first select all the scores of the younger-aged group and name it as a new variable <code>young</code> and then use our function <code>rec.mean.var</code> to recover the mean and variance. We can do the same for the older-aged group.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># younger-aged group</span>
+young=ca.cf[ca.cf[,<span class="dv">2</span>]<span class="op">==</span><span class="dv">1</span>,<span class="dv">1</span>]
+<span class="kw">rec.mean.var</span>(young) <span class="co"># true mean and variance are 30 and 25</span></code></pre></div>
+<pre><code>## $ceiling.percentage
+## [1] 0.308
+## 
+## $floor.percentage
+## [1] 0.001
+## 
+## $est.mean
+## [1] 29.8394
+## 
+## $est.var
+## [1] 23.90962</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the estimated floor and ceiling percentages and the recovered mean and variance estimates are displayed above</span>
+
+<span class="co"># older-aged group</span>
+old=ca.cf[ca.cf[,<span class="dv">2</span>]<span class="op">==</span><span class="dv">3</span>,<span class="dv">1</span>]
+<span class="kw">rec.mean.var</span>(old) <span class="co"># true mean and variance are 10 and 100</span></code></pre></div>
+<pre><code>## $ceiling.percentage
+## [1] 0.001
+## 
+## $floor.percentage
+## [1] 0.321
+## 
+## $est.mean
+## [1] 10.46971
+## 
+## $est.var
+## [1] 102.2337</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the estimated floor and ceiling percentages and the recovered mean and variance estimates are displayed above</span></code></pre></div>
+<p>Now we wish to conduct an ANOVA in the data with floor and ceiling effects. We can use the function <code>lw.f.star</code>. We can also conduct a t-test between the older-aged and the younger-aged group by using the function <code>lw.t.test</code>. Both methods <code>a</code> and <code>b</code> are used for the illustration purposes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ANOVA</span>
+<span class="kw">lw.f.star</span>(<span class="kw">data.frame</span>(ca.cf),score<span class="op">~</span>group,<span class="st">&quot;a&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] 1852.555
+## 
+## $p.value
+## [1] 0
+## 
+## $est.f.squared
+## [1] 1.235037</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lw.f.star</span>(<span class="kw">data.frame</span>(ca.cf),score<span class="op">~</span>group,<span class="st">&quot;b&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] 1225.603
+## 
+## $p.value
+## [1] 0
+## 
+## $est.f.squared
+## [1] 1.035575</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># t-test</span>
+<span class="kw">lw.t.test</span>(young,old,<span class="st">&quot;a&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] 52.36293
+## 
+## $p.value
+## [1] 2.158547e-255
+## 
+## $est.d
+## [1] 2.311363
+## 
+## $conf.int
+## [1] 18.64354 20.09586</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lw.t.test</span>(young,old,<span class="st">&quot;b&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] 54.53693
+## 
+## $p.value
+## [1] 7.002042e-258
+## 
+## $est.d
+## [1] 2.438966
+## 
+## $conf.int
+## [1] 18.67241 20.06698</code></pre>
+<p>Both the ANOVA and the t-tests returned significant results.</p>
+</div>
+<div id="example-2-simulation-and-testing" class="section level1">
+<h1>Example 2: Simulation and Testing</h1>
+<p>The following example provides an overview of the helper functions in the package that can aid in simulations and further demonstrates data analytic functions in the package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Simulate healthy data for two groups</span>
+x.<span class="dv">1</span>=<span class="kw">rnorm</span>(<span class="dv">300</span>,<span class="dv">2</span>,<span class="dv">4</span>)
+x.<span class="dv">2</span>=<span class="kw">rnorm</span>(<span class="dv">300</span>,<span class="dv">3</span>,<span class="dv">5</span>)
+<span class="co"># check mean and variance for simulated healthy data</span>
+<span class="kw">mean</span>(x.<span class="dv">1</span>);<span class="kw">var</span>(x.<span class="dv">1</span>)</code></pre></div>
+<pre><code>## [1] 2.05444</code></pre>
+<pre><code>## [1] 16.60983</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(x.<span class="dv">2</span>);<span class="kw">var</span>(x.<span class="dv">2</span>)</code></pre></div>
+<pre><code>## [1] 3.02112</code></pre>
+<pre><code>## [1] 24.23865</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># induce ceiling effects of 20% in group 1</span>
+x.<span class="fl">1.</span>cf=<span class="kw">induce.cfe</span>(.<span class="dv">2</span>,<span class="dv">0</span>,x.<span class="dv">1</span>)
+<span class="co"># induce floor effects of 10% in group 2</span>
+x.<span class="fl">2.</span>cf=<span class="kw">induce.cfe</span>(<span class="dv">0</span>,.<span class="dv">1</span>,x.<span class="dv">2</span>)
+<span class="co"># recover the mean and variance for ceiling/floor data</span>
+<span class="kw">rec.mean.var</span>(x.<span class="fl">1.</span>cf)</code></pre></div>
+<pre><code>## $ceiling.percentage
+## [1] 0.003333333
+## 
+## $floor.percentage
+## [1] 0.2233333
+## 
+## $est.mean
+## [1] 2.026828
+## 
+## $est.var
+## [1] 17.27209</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rec.mean.var</span>(x.<span class="fl">2.</span>cf)</code></pre></div>
+<pre><code>## $ceiling.percentage
+## [1] 0.09666667
+## 
+## $floor.percentage
+## [1] 0.003333333
+## 
+## $est.mean
+## [1] 2.999412
+## 
+## $est.var
+## [1] 23.81148</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># conduct a t test on healthy data</span>
+<span class="kw">t.test</span>(x.<span class="dv">1</span>,x.<span class="dv">2</span>)</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  x.1 and x.2
+## t = -2.6197, df = 577.85, p-value = 0.009031
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -1.6914272 -0.2419345
+## sample estimates:
+## mean of x mean of y 
+##   2.05444   3.02112</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t.test</span>(x.<span class="fl">1.</span>cf,x.<span class="fl">2.</span>cf)</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  x.1.cf and x.2.cf
+## t = -0.82159, df = 559.89, p-value = 0.4117
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.9084296  0.3725991
+## sample estimates:
+## mean of x mean of y 
+##  2.505639  2.773554</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># conduct an adjusted t test on ceiling/floor data</span>
+<span class="kw">lw.t.test</span>(x.<span class="fl">1.</span>cf,x.<span class="fl">2.</span>cf,<span class="st">&quot;a&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] -2.414067
+## 
+## $p.value
+## [1] 0.01649626
+## 
+## $est.d
+## [1] -0.2132773
+## 
+## $conf.int
+## [1] -1.766068 -0.179101</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lw.t.test</span>(x.<span class="fl">1.</span>cf,x.<span class="fl">2.</span>cf,<span class="st">&quot;b&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] -2.628172
+## 
+## $p.value
+## [1] 0.009040704
+## 
+## $est.d
+## [1] -0.2145894
+## 
+## $conf.int
+## [1] -1.7009239 -0.2442446</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># generate a dataframe for ANOVA demo</span>
+testdat=<span class="kw">threeganova.sim</span>(<span class="dv">10000</span>,.<span class="dv">0625</span>,<span class="dv">1</span>)
+<span class="co"># induce ceiling/floor effects in the data</span>
+testdat.cf=testdat
+testdat.cf[testdat.cf<span class="op">$</span>group<span class="op">==</span><span class="dv">2</span>,]<span class="op">$</span>y=<span class="kw">induce.cfe</span>(.<span class="dv">2</span>,<span class="dv">0</span>,testdat.cf[testdat.cf<span class="op">$</span>group<span class="op">==</span><span class="dv">2</span>,]<span class="op">$</span>y)
+<span class="co"># conduct an adjusted F star test on ceiling/floor data</span>
+<span class="kw">lw.f.star</span>(testdat.cf,y<span class="op">~</span>group,<span class="st">&quot;a&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] 916.6139
+## 
+## $p.value
+## [1] 0
+## 
+## $est.f.squared
+## [1] 0.06110759</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lw.f.star</span>(testdat.cf,y<span class="op">~</span>group,<span class="st">&quot;b&quot;</span>)</code></pre></div>
+<pre><code>## $statistic
+## [1] 824.1566
+## 
+## $p.value
+## [1] 0
+## 
+## $est.f.squared
+## [1] 0.05893779</code></pre>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
